@@ -203,13 +203,13 @@ nav li {
   }
 
   #upgrades {
-    columns: upgrades;
+    grid-column: upgrades;
     margin: 0;
     order: 3;
   }
 
   #reviews {
-    columns: reviews;
+    grid-column: reviews;
     margin: 0;
     order: 4;
   }
@@ -234,14 +234,13 @@ nav li {
   }
 
   #hero-content div{
-    width: 15vw;
-    height: 25vh;
+    width: max-content;
+    height: min-content;
     font-size: larger;
   }
 
   #hero-content button {
-    width: 80%;
-    margin-top: 1.5vh;
-    padding: 1.5vh 3vw;
+    height: max-content;
+    max-width: 60%;
   }
 }
