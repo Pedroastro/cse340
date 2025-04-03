@@ -37,9 +37,9 @@ Util.buildClassificationGrid = async function(data){
         + '" title="View ' + vehicle.inv_make + ' '+ vehicle.inv_model 
         + 'details"><img src="' + vehicle.inv_thumbnail 
         +'" alt="Image of '+ vehicle.inv_make + ' ' + vehicle.inv_model 
-        +' on CSE Motors" /></a>'
+        +' on CSE Motors"></a>'
         grid += '<div class="namePrice">'
-        grid += '<hr />'
+        grid += '<hr>'
         grid += '<h2>'
         grid += '<a href="../../inv/detail/' + vehicle.inv_id +'" title="View ' 
         + vehicle.inv_make + ' ' + vehicle.inv_model + ' details">' 
@@ -64,7 +64,7 @@ Util.buildVehicleDetail = async function(vehicleDetail) {
   let detail = ""
   if (vehicleDetail != undefined) {
   detail += '<div id="vehicle-detail">'
-  detail += '<img src="' + vehicleDetail.inv_image + '" alt="Image of ' + vehicleDetail.inv_make + ' ' + vehicleDetail.inv_model + ' on CSE Motors" />'
+  detail += '<img src="' + vehicleDetail.inv_image + '" alt="Image of ' + vehicleDetail.inv_make + ' ' + vehicleDetail.inv_model + ' on CSE Motors">'
   detail += '<div class="details">'
   detail += '<h2>' + vehicleDetail.inv_make + ' ' + vehicleDetail.inv_model + ' Details</h2>'
   detail += '<ul>'
