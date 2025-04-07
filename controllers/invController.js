@@ -18,6 +18,7 @@ invCont.buildByClassificationId = async function (req, res, next) {
       title: className + " vehicles",
       nav,
       grid,
+      errors: null
     })
   } catch (error) {
     return next({status: 404, message: 'Sorry, we appear to have lost that page.'})
@@ -36,6 +37,7 @@ invCont.buildByInventoryId = async function (req, res, next) {
       title: invName,
       nav,
       grid,
+      errors: null
     })
   } catch (error) {
     return next({status: 404, message: 'Sorry, we appear to have lost that page.'})

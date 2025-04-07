@@ -280,6 +280,46 @@ nav li a {
   width: fit-content;
 }
 
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 2vh;
+  background-color: orange;
+  border-radius: 2px;
+  border: #108DE8 solid 2px;
+  width: fit-content;
+  padding: 1em;
+}
+
+.form-container form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 2vh;
+}
+
+.form-container input {
+  width: 100%;
+  padding: 0.5em;
+  border-radius: 2px;
+  border: #108DE8 solid 2px;
+}
+
+.form-container button {
+  background: #FADF16;
+  padding: 0.7em;
+  border-radius: 2px;
+  border: #108DE8 solid 2px;
+  font-weight: bolder;
+}
+
 @media screen and (min-width: 800px) {
   body {
     display: flex;
