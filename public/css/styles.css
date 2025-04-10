@@ -320,6 +320,12 @@ nav li a {
   font-weight: bolder;
 }
 
+#inventory-management {
+  display: flex;
+  flex-direction: column;
+  margin-top: 2vh;
+}
+
 @media screen and (min-width: 800px) {
   body {
     display: flex;
