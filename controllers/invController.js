@@ -1,4 +1,5 @@
 const invModel = require("../models/inventory-model")
+const Util = require("../utilities/")
 const utilities = require("../utilities/")
 
 const invCont = {}
@@ -66,11 +67,58 @@ invCont.addClassification = async function (req, res) {
   const { classification_name } = req.body
   const result = await invModel.addClassification(classification_name)
   if (result) {
-    req.flash("notice", `Congratulations, ${classification_name} has been added.`)
-    res.status(201).redirect("/inv/add-classification")
+    req.flash("notice", `Congratulations, ${classification_name} classification has been added.`)
+    res.status(201).redirect("/inv")
   } else {
     req.flash("notice", "Sorry, there was an error adding the classification.")
     res.status(500).redirect("/inv/add-classification")
+  }
+}
+
+invCont.buildAddInventory = async function (req, res) {
+  const classificationList = await Util.buildClassificationList()
+  let nav = await utilities.getNav()
+  res.render("./inventory/add-inventory", {
+    title: "Add Vehicle",
+    nav,
+    classificationList,
+    errors: null
+  })
+}
+
+invCont.addInventory = async function (req, res) {
+  const {
+    inv_make,
+    inv_model,
+    inv_year,
+    inv_description,
+    inv_image,
+    inv_thumbnail,
+    inv_price,
+    inv_miles,
+    inv_color,
+    classification_id
+  } = req.body
+
+  const result = await invModel.addInventory(
+    inv_make,
+    inv_model,
+    inv_year,
+    inv_description,
+    inv_image,
+    inv_thumbnail,
+    inv_price,
+    inv_miles,
+    inv_color,
+    classification_id
+  )
+
+  if (result) {
+    req.flash("notice", `Congratulations, ${inv_make} ${inv_model} has been added.`)
+    res.status(201).redirect("/inv")
+  } else {
+    req.flash("notice", "Sorry, there was an error adding the vehicle.")
+    res.status(500).redirect("/inv/add-inventory")
   }
 }
 
