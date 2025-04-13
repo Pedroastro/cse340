@@ -326,6 +326,31 @@ nav li a {
   margin-top: 2vh;
 }
 
+#inventory-management-table-container {
+  margin-top: 2vh;
+}
+
+#inventory-management-table-container select {
+  border: #108DE8 solid 2px;
+}
+
+#inventory-management-table-container table {
+  width: fit-content;
+  border-collapse: collapse;
+  margin-top: 2vh;
+  border: #108DE8 solid 2px;
+}
+
+#inventory-management-table-container th, #inventory-management-table-container td {
+  padding: 0.5em;
+  border: #108DE8 solid 2px;
+  text-align: center;
+}
+
+#inventory-management-table-container td:first-child {
+  text-align: left;
+}
+
 @media screen and (min-width: 800px) {
   body {
     display: flex;
@@ -423,7 +448,7 @@ nav li a {
     gap: 2rem;
   }
 
-  #add-inventory-form-container {
+  #add-inventory-form-container, #edit-inventory-form-container {
     min-width: 30%;
   }
 }
