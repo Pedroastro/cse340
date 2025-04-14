@@ -8,7 +8,7 @@
    </ul>
   <% } %>
   <div class="form-container" id="edit-inventory-form-container">
-    <form action="/inv/edit-inventory" method="POST">
+    <form action="/inv/edit" method="POST" id="updateForm">
         <div class="form-group">
             <label for="classificationList">Classification</label>
             <%- classificationList %>
@@ -49,6 +49,10 @@
             <label for="inv_color">Color</label>
             <input type="text" name="inv_color" id="inv_color" value="<%= locals.inv_color %>" required>
         </div>
-        <button type="submit">Update Vehicle</button>
+        <button type="submit" disabled>Update Vehicle</button>
+        <input type="hidden" name="inv_id"
+        <% if(locals.inv_id) { %> value="<%= locals.inv_id %>"
+        <% } %>>
     </form>
   </div>
+  <script src="/js/inv-update.js"></script>
