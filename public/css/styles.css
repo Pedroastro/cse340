@@ -448,7 +448,7 @@ nav li a {
     gap: 2rem;
   }
 
-  #add-inventory-form-container, #edit-inventory-form-container {
+  #add-inventory-form-container, #edit-inventory-form-container, #delete-inventory-form-container {
     min-width: 30%;
   }
 }

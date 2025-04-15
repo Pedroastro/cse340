@@ -121,10 +121,105 @@ async function accountLogin(req, res) {
 async function buildManagement(req, res) {
   let nav = await utilities.getNav()
   res.render("account/account-management", {
-    title: "You're logged in",
+    title: "Account Management",
     nav,
     errors: null
   })
 }
 
-module.exports = { buildLogin, buildRegister, registerAccount, accountLogin, buildManagement }
+async function buildUpdate(req, res) {
+  let nav = await utilities.getNav()
+  const account_id = parseInt(req.params.account_id)
+  const accountData = await accountModel.getAccountById(account_id)
+  if (accountData) {
+    res.render("account/account-update", {
+      title: "My Account",
+      nav,
+      errors: null,
+      account_firstname: accountData.account_firstname,
+      account_lastname: accountData.account_lastname,
+      account_email: accountData.account_email,
+      account_id: accountData.account_id
+    })
+  } else {
+    req.flash("notice", "Sorry, we could not find that account.")
+    res.status(404).redirect("/account/")
+  }
+}
+
+async function accountUpdate(req, res) {
+  let nav = await utilities.getNav()
+  const { account_firstname, account_lastname, account_email } = req.body
+  const account_id = parseInt(req.body.account_id)
+  const updateResult = await accountModel.updateAccount(account_id, account_firstname, account_lastname, account_email)
+  if (updateResult) {
+    req.flash("notice", "Your account was successfully updated.")
+    res.redirect("/account/")
+  } else {
+    req.flash("notice", "Sorry, the update failed.")
+    res.status(501).render("account/account-update", {
+      title: "My Account",
+      nav,
+      errors: null,
+      account_id,
+      account_firstname,
+      account_lastname,
+      account_email
+    })
+  }
+}
+
+async function passwordUpdate(req, res) {
+  let nav = await utilities.getNav()
+  const new_password = req.body.account_password
+  const account_id = parseInt(req.body.account_id)
+  const accountData = await accountModel.getAccountById(account_id)
+  console.log(accountData)
+  if (accountData) {
+    try {
+      if (!(await bcrypt.compare(new_password, accountData[0].account_password))) {
+        const hashedPassword = await bcrypt.hashSync(new_password, 10)
+        const updateResult = await accountModel.updatePassword(account_id, hashedPassword)
+        if (updateResult) {
+          req.flash("notice", "Your password was successfully updated.")
+          res.status(201).redirect("/account/")
+        } else {
+          req.flash("notice", "Sorry, the update failed.")
+          res.status(501).render("account/account-update", {
+            title: "My Account",
+            nav,
+            errors: null,
+            account_firstname: accountData[0].account_firstname,
+            account_lastname: accountData[0].account_lastname,
+            account_email: accountData[0].account_email,
+            account_id: accountData[0].account_id
+          })
+        }
+      } else {
+        req.flash("notice", "Please use a different password.")
+        res.status(400).render("account/account-update", {
+          title: "My Account",
+          nav,
+          errors: null,
+          account_firstname: accountData[0].account_firstname,
+          account_lastname: accountData[0].account_lastname,
+          account_email: accountData[0].account_email,
+          account_id: accountData[0].account_id
+        })
+      }
+    } catch (error) {
+      throw new Error('Access Forbidden: ' + error.message)
+    }
+  } else {
+    req.flash("notice", "Sorry, we could not find that account.")
+    res.status(404).redirect("/account/")
+  }
+}
+
+async function logout(req, res) {
+  res.clearCookie("jwt");
+  req.flash("notice", "You have successfully logged out.");
+  res.redirect("/");
+}
+
+module.exports = { buildLogin, buildRegister, registerAccount, accountLogin, buildManagement, buildUpdate, accountUpdate, passwordUpdate, logout }
