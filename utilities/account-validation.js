@@ -163,6 +163,7 @@ validate.updatePasswordRules = () => {
 }
 
 validate.checkUpdateData = async (req, res, next) => {
+    const account_id = parseInt(req.body.account_id)
     const { account_firstname, account_lastname, account_email } = req.body
     let errors = []
     errors = validationResult(req)
@@ -172,9 +173,10 @@ validate.checkUpdateData = async (req, res, next) => {
         errors,
         title: "My Account",
         nav,
-        account_firstname,
-        account_lastname,
-        account_email,
+        account_firstname: account_firstname,
+        account_lastname: account_lastname,
+        account_email: account_email,
+        account_id: account_id,
       })
       return
     }
@@ -182,7 +184,7 @@ validate.checkUpdateData = async (req, res, next) => {
 }
 
 validate.checkPasswordData = async (req, res, next) => {
-    const { account_password } = req.body
+    const account_id = parseInt(req.body.account_id)
     let errors = []
     errors = validationResult(req)
     if (!errors.isEmpty()) {
@@ -191,7 +193,7 @@ validate.checkPasswordData = async (req, res, next) => {
         errors,
         title: "My Account",
         nav,
-        account_password,
+        account_id: account_id
       })
       return
     }

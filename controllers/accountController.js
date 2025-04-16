@@ -149,22 +149,22 @@ async function buildUpdate(req, res) {
 
 async function accountUpdate(req, res) {
   let nav = await utilities.getNav()
-  const { account_firstname, account_lastname, account_email } = req.body
   const account_id = parseInt(req.body.account_id)
+  const { account_firstname, account_lastname, account_email } = req.body
   const updateResult = await accountModel.updateAccount(account_id, account_firstname, account_lastname, account_email)
   if (updateResult) {
     req.flash("notice", "Your account was successfully updated.")
-    res.redirect("/account/")
+    res.status(201).redirect("/account/")
   } else {
     req.flash("notice", "Sorry, the update failed.")
-    res.status(501).render("account/account-update", {
+    res.status(501).render("/account/account-update", {
       title: "My Account",
       nav,
       errors: null,
-      account_id,
-      account_firstname,
-      account_lastname,
-      account_email
+      account_id: account_id,
+      account_firstname: account_firstname,
+      account_lastname: account_lastname,
+      account_email: account_email
     })
   }
 }
@@ -174,30 +174,16 @@ async function passwordUpdate(req, res) {
   const new_password = req.body.account_password
   const account_id = parseInt(req.body.account_id)
   const accountData = await accountModel.getAccountById(account_id)
-  console.log(accountData)
   if (accountData) {
     try {
-      if (!(await bcrypt.compare(new_password, accountData[0].account_password))) {
-        const hashedPassword = await bcrypt.hashSync(new_password, 10)
-        const updateResult = await accountModel.updatePassword(account_id, hashedPassword)
-        if (updateResult) {
-          req.flash("notice", "Your password was successfully updated.")
-          res.status(201).redirect("/account/")
-        } else {
-          req.flash("notice", "Sorry, the update failed.")
-          res.status(501).render("account/account-update", {
-            title: "My Account",
-            nav,
-            errors: null,
-            account_firstname: accountData[0].account_firstname,
-            account_lastname: accountData[0].account_lastname,
-            account_email: accountData[0].account_email,
-            account_id: accountData[0].account_id
-          })
-        }
+      const hashedPassword = await bcrypt.hashSync(new_password, 10)
+      const updateResult = await accountModel.updatePassword(account_id, hashedPassword)
+      if (updateResult) {
+        req.flash("notice", "Your password was successfully updated.")
+        res.status(201).redirect("/account/")
       } else {
-        req.flash("notice", "Please use a different password.")
-        res.status(400).render("account/account-update", {
+        req.flash("notice", "Sorry, the update failed.")
+        res.status(501).render("/account/account-update", {
           title: "My Account",
           nav,
           errors: null,

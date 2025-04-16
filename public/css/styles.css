@@ -351,6 +351,10 @@ nav li a {
   text-align: left;
 }
 
+#welcome-management {
+  margin-top: 2vh;
+}
+
 @media screen and (min-width: 800px) {
   body {
     display: flex;
