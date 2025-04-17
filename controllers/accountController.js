@@ -1,5 +1,6 @@
 const utilities = require('../utilities/index');
 const accountModel = require('../models/account-model');
+const reviewModel = require('../models/review-model');
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
@@ -119,11 +120,15 @@ async function accountLogin(req, res) {
 }
 
 async function buildManagement(req, res) {
+  const reviews = await reviewModel.getReviewsByAccountId(res.locals.accountData.account_id)
+  const reviewsList = await utilities.buildReviewList(reviews)
   let nav = await utilities.getNav()
   res.render("account/account-management", {
     title: "Account Management",
     nav,
-    errors: null
+    errors: null,
+    reviews: reviews,
+    reviewsList: reviewsList,
   })
 }
 
@@ -208,4 +213,85 @@ async function logout(req, res) {
   res.redirect("/");
 }
 
-module.exports = { buildLogin, buildRegister, registerAccount, accountLogin, buildManagement, buildUpdate, accountUpdate, passwordUpdate, logout }
+async function buildUpdateReview(req, res) {
+  const review_id = parseInt(req.params.review_id);
+  const reviewData = await reviewModel.getReviewById(review_id);
+  if (reviewData.rows[0] && reviewData.rows[0].account_id == res.locals.accountData.account_id) {
+    let nav = await utilities.getNav();
+    res.render("account/update-review", {
+      title: "Update Review",
+      nav,
+      errors: null,
+      review_date: reviewData.rows[0].review_date,
+      review_text: reviewData.rows[0].review_text,
+      review_id: reviewData.rows[0].review_id,
+      review_screenname: reviewData.rows[0].review_screenname,
+    });
+  } else {
+    req.flash("notice", "Sorry, we could not find that review.");
+    res.status(404).redirect("/account/");
+  }
+}
+
+async function updateReview(req, res) {
+  const review_id = parseInt(req.body.review_id);
+  const { review_text, review_screenname } = req.body;
+  const reviewData = await reviewModel.getReviewById(review_id);
+  const updateResult = await reviewModel.updateReview(review_screenname, review_text, review_id);
+  if (updateResult) {
+    req.flash("notice", "Your review was successfully updated.");
+    res.status(201).redirect("/account/");
+  } else {
+    let nav = await utilities.getNav();
+    req.flash("notice", "Sorry, the update failed.");
+    res.status(501).render("/account/update-review", {
+      title: "Update Review",
+      nav,
+      errors: null,
+      review_id: review_id,
+      review_text: review_text,
+      review_date: reviewData.rows[0].review_date,
+      review_screenname: review_screenname
+    });
+  }
+}
+
+async function buildDeleteReview(req, res) {
+  const review_id = parseInt(req.params.review_id);
+  const reviewData = await reviewModel.getReviewById(review_id);
+  if (reviewData.rows[0] && reviewData.rows[0].account_id == res.locals.accountData.account_id) {
+    let nav = await utilities.getNav();
+    res.render("account/delete-review", {
+      title: "Delete Review",
+      nav,
+      errors: null,
+      review_date: reviewData.rows[0].review_date,
+      review_text: reviewData.rows[0].review_text,
+      review_id: reviewData.rows[0].review_id,
+      review_screenname: reviewData.rows[0].review_screenname,
+    });
+  } else {
+    req.flash("notice", "Sorry, we could not find that review.");
+    res.status(404).redirect("/account/");
+  }
+}
+
+async function deleteReview(req, res) {
+  const review_id = parseInt(req.body.review_id);
+  const reviewData = await reviewModel.getReviewById(review_id);
+  if (reviewData.rows[0] && reviewData.rows[0].account_id == res.locals.accountData.account_id) {
+    const deleteResult = await reviewModel.deleteReview(review_id);
+    if (deleteResult) {
+      req.flash("notice", "Your review was successfully deleted.");
+      res.status(201).redirect("/account/");
+    } else {
+      req.flash("notice", "Sorry, the delete failed.");
+      res.status(501).redirect("/account/delete-review/" + review_id);
+    }
+  } else {
+    req.flash("notice", "Sorry, we could not find that review.");
+    res.status(404).redirect("/account/");
+  }
+}
+
+module.exports = { buildLogin, buildRegister, registerAccount, accountLogin, buildManagement, buildUpdate, accountUpdate, passwordUpdate, logout, buildUpdateReview, updateReview, buildDeleteReview, deleteReview }

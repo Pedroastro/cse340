@@ -154,4 +154,22 @@ Util.checkAccountType = (req, res, next) => {
   }
 };
 
+Util.buildReviewList = async function (reviews) {
+  let reviewList = ""
+  if (reviews.rows.length > 0) {
+    reviewList += "<ol>"
+    for (const review of reviews.rows) {
+      const inventoryInfo = await invModel.getInventoryById(review.inv_id)
+      const inventoryName = `${inventoryInfo[0].inv_year} ${inventoryInfo[0].inv_make} ${inventoryInfo[0].inv_model}`
+      reviewList += "<li>"
+      reviewList += "Reviewed the " + inventoryName + " on " + review.review_date + " | <a href='/account/update-review/" + review.review_id + "'>Edit</a> | <a href='/account/delete-review/" + review.review_id + "'>Delete</a>"
+      reviewList += "</li>"
+    }
+    reviewList += "</ol>"
+  } else {
+    reviewList += '<p class="notice">No reviews have been added yet.</p>'
+  }
+  return reviewList
+}
+
 module.exports = Util

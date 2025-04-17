@@ -4,6 +4,7 @@ const router = new express.Router()
 const invController = require("../controllers/invController")
 const classValidate = require("../utilities/add-classification-validation")
 const invValidate = require("../utilities/add-inventory-validation")
+const reviewValidate = require("../utilities/review-validation")
 const utilities = require("../utilities/index")
 
 // Route to build inventory by classification view
@@ -71,5 +72,11 @@ router.post("/delete/",
   utilities.checkAccountType,
   utilities.handleErrors(invController.deleteInventory)
 );
+
+router.post("/review",
+  reviewValidate.reviewRules(),
+  reviewValidate.checkReviewData,
+  utilities.handleErrors(invController.addReview)
+)
 
 module.exports = router;

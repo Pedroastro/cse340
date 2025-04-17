@@ -1,4 +1,5 @@
 const invModel = require("../models/inventory-model")
+const reviewModel = require("../models/review-model")
 const Util = require("../utilities/")
 const utilities = require("../utilities/")
 
@@ -29,16 +30,20 @@ invCont.buildByClassificationId = async function (req, res, next) {
 invCont.buildByInventoryId = async function (req, res, next) {
   const inv_id = req.params.invId
   const data = await invModel.getInventoryById(inv_id)
-  // temporary error handling
   try {
     const grid = await utilities.buildVehicleDetail(data[0])
+    const reviews = await reviewModel.getReviewsByInventoryId(inv_id)
     let nav = await utilities.getNav()
     const invName = `${data[0].inv_year} ${data[0].inv_make} ${data[0].inv_model}`
     res.render("./inventory/vehicle", {
       title: invName,
       nav,
       grid,
-      errors: null
+      errors: null,
+      reviews: reviews,
+      review_screenname: "",
+      review_text: "",
+      inv_id: inv_id
     })
   } catch (error) {
     return next({status: 404, message: 'Sorry, we appear to have lost that page.'})
@@ -265,6 +270,33 @@ invCont.deleteInventory = async function (req, res) {
   } else {
     req.flash("notice", "Sorry, the delete failed.")
     res.redirect(`/inv/delete/${inv_id}`)
+  }
+}
+
+invCont.addReview = async function (req, res) {
+  const inv_id = parseInt(req.body.inv_id)
+  const { review_screenname, review_text, account_id } = req.body
+  const result = await reviewModel.addReview(review_screenname, review_text, inv_id, account_id)
+  if (result) {
+    req.flash("notice", "Thank you for your review.")
+    res.status(201).redirect(`/inv/detail/${inv_id}`)
+  } else {
+    req.flash("notice", "Sorry, there was an error adding the review.")
+    const data = await invModel.getInventoryById(inv_id)
+    const grid = await utilities.buildVehicleDetail(data[0])
+    const reviews = await reviewModel.getReviewsByInventoryId(inv_id)
+    let nav = await utilities.getNav()
+    const invName = `${data[0].inv_year} ${data[0].inv_make} ${data[0].inv_model}`
+    res.render("./inventory/vehicle", {
+      title: invName,
+      nav,
+      grid,
+      errors: null,
+      reviews: reviews,
+      review_screenname: review_screenname,
+      review_text: review_text,
+      inv_id: inv_id
+    })
   }
 }
 

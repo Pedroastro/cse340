@@ -17,4 +17,8 @@
     <h3>Inventory Management</h3>
     <p><a href="/inv">Access Inventory Management</a></p>
   <% } %>
+  <% if (locals.reviews.rows && locals.reviews.rows.length > 0) { %>
+    <h3>My Reviews</h3>
+    <%- locals.reviewsList %>
+  <% } %>
 <% } %>

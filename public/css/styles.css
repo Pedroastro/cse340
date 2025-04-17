@@ -355,6 +355,10 @@ nav li a {
   margin-top: 2vh;
 }
 
+.reviews-container .form-container, .reviews-container .form-group {
+  width: 100%;
+}
+
 @media screen and (min-width: 800px) {
   body {
     display: flex;

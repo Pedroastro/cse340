@@ -4,7 +4,49 @@
     <% } else {
       res.redirect('/')
     } %>
-
-<%# messages() %>
-
+<%- messages() %>
+<% if (errors) { %>
+  <ul class="notice">
+ <% errors.array().forEach(error => { %>
+   <li><%= error.msg %></li>
+<%  }) %>
+ </ul>
+<% } %>
 <%- grid %>
+<div class="reviews-container">
+<h3>Customer Reviews</h3>
+<% if (locals.reviews.rows && locals.reviews.rows.length > 0) { %>
+      <ul class="reviews-list">
+        <% locals.reviews.rows.forEach(review => { %>
+          <li class="review-item">
+            <p><strong><%= review.review_screenname %></strong> wrote on <%= review.review_date %></p>
+            <hr>
+            <p><%= review.review_text %></p>
+          </li>
+        <% }) %>
+      </ul>
+  <% } else { %>
+    <p>Be the first to write a review.</p>
+  <% } %>
+
+<% if (locals.loggedin) { %>
+  <div class="form-container">
+    <h3>Write a Review</h3>
+    <form action="/inv/review" method="POST">
+      <div class="form-group">
+        <label for="review_screenname">Screen Name:</label>
+        <input type="text" name="review_screenname" id="review_screenname" required value="<%= locals.review_screenname %>">
+      </div>
+      <div class="form-group" id="review_text_container">
+        <label for="review_text">Review:</label>
+        <textarea name="review_text" id="review_text" required><%= locals.review_text %></textarea>
+      </div>
+      <input type="hidden" name="inv_id" <% if(locals.inv_id) { %> value="<%= locals.inv_id %>" <% } %>>
+      <input type="hidden" name="account_id" <% if(locals.accountData.account_id) { %> value="<%= locals.accountData.account_id %>" <% } %>>
+      <button type="submit">Submit Review</button>
+    </form>
+  </div>
+<% } else { %>
+  <p>You must <a title="Click to log in" href="/account/login">login</a> to write a review.</p>
+<% } %>
+</div>
